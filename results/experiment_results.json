@@ -1,0 +1,93 @@
+[
+  {
+    "image_name": "OIP.jpg",
+    "snr_db": 0,
+    "semantic_similarity": 0.7287,
+    "reconstruction_quality": 0.9808,
+    "distortion": 0.001917,
+    "psnr": 39.52,
+    "ssim": 0.9395,
+    "encode_time_ms": 824.19,
+    "channel_time_ms": 0.0,
+    "total_time_ms": 824.19,
+    "mode": "actual"
+  },
+  {
+    "image_name": "OIP.jpg",
+    "snr_db": 5,
+    "semantic_similarity": 0.8668,
+    "reconstruction_quality": 0.9933,
+    "distortion": 0.000671,
+    "psnr": 39.83,
+    "ssim": 0.9463,
+    "encode_time_ms": 148.78,
+    "channel_time_ms": 0.0,
+    "total_time_ms": 148.78,
+    "mode": "actual"
+  },
+  {
+    "image_name": "OIP.jpg",
+    "snr_db": 10,
+    "semantic_similarity": 0.9565,
+    "reconstruction_quality": 0.9982,
+    "distortion": 0.000177,
+    "psnr": 39.96,
+    "ssim": 0.949,
+    "encode_time_ms": 108.44,
+    "channel_time_ms": 0.0,
+    "total_time_ms": 108.44,
+    "mode": "actual"
+  },
+  {
+    "image_name": "OIP.jpg",
+    "snr_db": 15,
+    "semantic_similarity": 0.9854,
+    "reconstruction_quality": 0.9994,
+    "distortion": 5.9e-05,
+    "psnr": 39.99,
+    "ssim": 0.9497,
+    "encode_time_ms": 99.54,
+    "channel_time_ms": 0.0,
+    "total_time_ms": 99.54,
+    "mode": "actual"
+  },
+  {
+    "image_name": "OIP.jpg",
+    "snr_db": 20,
+    "semantic_similarity": 0.9949,
+    "reconstruction_quality": 0.9998,
+    "distortion": 2e-05,
+    "psnr": 39.99,
+    "ssim": 0.9499,
+    "encode_time_ms": 93.34,
+    "channel_time_ms": 0.0,
+    "total_time_ms": 93.34,
+    "mode": "actual"
+  },
+  {
+    "image_name": "OIP.jpg",
+    "snr_db": 25,
+    "semantic_similarity": 0.9984,
+    "reconstruction_quality": 0.9999,
+    "distortion": 6e-06,
+    "psnr": 40.0,
+    "ssim": 0.95,
+    "encode_time_ms": 92.58,
+    "channel_time_ms": 0.0,
+    "total_time_ms": 92.58,
+    "mode": "actual"
+  },
+  {
+    "image_name": "OIP.jpg",
+    "snr_db": 30,
+    "semantic_similarity": 0.9995,
+    "reconstruction_quality": 1.0,
+    "distortion": 2e-06,
+    "psnr": 40.0,
+    "ssim": 0.95,
+    "encode_time_ms": 93.51,
+    "channel_time_ms": 0.0,
+    "total_time_ms": 93.51,
+    "mode": "actual"
+  }
+]

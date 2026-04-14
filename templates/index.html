@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven Trust-Aware Semantic Communication for 6G Networks</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --bg: #060714;
+            --panel: rgba(14, 16, 30, 0.75);
+            --border: rgba(69, 252, 219, 0.15);
+            --primary: #45fcdb;
+            --secondary: #7c6aef;
+            --accent: #ff4d6d;
+            --warn: #ffb347;
+            --text: #e8eaf6;
+            --muted: #7a7f99;
+            --success: #00e676;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Animated BG */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 20% 50%, rgba(124, 106, 239, 0.08), transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(69, 252, 219, 0.06), transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(255, 77, 109, 0.04), transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 1700px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 30px;
+            background: var(--panel);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            margin-bottom: 18px;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            background: rgba(69, 252, 219, 0.08);
+            border: 1px solid rgba(69, 252, 219, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        /* Tab Nav */
+        .tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+
+        .tab {
+            padding: 10px 22px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: var(--panel);
+            color: var(--muted);
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, rgba(69, 252, 219, 0.15), rgba(124, 106, 239, 0.15));
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Glass Panel */
+        .glass {
+            background: var(--panel);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .glass h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .sidebar-layout {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 18px;
+        }
+
+        /* Metric Cards */
+        .kpi {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .kpi-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 4px;
+        }
+
+        .kpi-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        /* Chart Box */
+        .chart-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            padding: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .chart-box canvas,
+        .chart-box .plotly-chart {
+            width: 100% !important;
+        }
+
+        /* Controls */
+        .control {
+            margin-bottom: 16px;
+        }
+
+        .control label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        .control label span:last-child {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        input[type=range] {
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent), var(--warn), var(--success), var(--primary));
+            border-radius: 5px;
+            -webkit-appearance: none;
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(69, 252, 219, 0.5);
+        }
+
+        .sel {
+            width: 100%;
+            padding: 9px 12px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 8px;
+            outline: none;
+            font-family: 'Outfit';
+            font-size: 0.9rem;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: 'Outfit';
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(69, 252, 219, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn-secondary {
+            padding: 12px 24px;
+            background: rgba(124, 106, 239, 0.2);
+            border: 1px solid var(--secondary);
+            border-radius: 12px;
+            color: var(--secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: 'Outfit';
+            font-size: 0.9rem;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(124, 106, 239, 0.35);
+            transform: translateY(-1px);
+        }
+
+        /* Upload */
+        .upload-zone {
+            border: 2px dashed rgba(69, 252, 219, 0.3);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(69, 252, 219, 0.02);
+            margin-bottom: 16px;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(69, 252, 219, 0.06);
+        }
+
+        .upload-zone .icon {
+            font-size: 2rem;
+            margin-bottom: 6px;
+        }
+
+        /* Image panels */
+        .img-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .img-panel-head {
+            padding: 10px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .img-display {
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+        }
+
+        .img-display img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            padding: 12px;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 8px;
+            text-align: center;
+        }
+
+        .stat-l {
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        .stat-v {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            margin: 16px auto;
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media(max-width:1100px) {
+
+            .sidebar-layout,
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .grid-4 {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <div class="header">
+            <h1>⚡ AI-Driven Trust-Aware Semantic Communication for 6G Networks</h1>
+            <div class="badges">
+                <div class="badge">SVM Trust Engine</div>
+                <div class="badge">CLIP Semantic Encoder</div>
+                <div class="badge">Adaptive Bandwidth</div>
+            </div>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <div class="tab active" data-tab="dashboard">📊 Live Dashboard</div>
+            <div class="tab" data-tab="transmit">📡 Semantic Transmitter</div>
+            <div class="tab" data-tab="model">🧠 Model Evaluation</div>
+        </div>
+
+        <!-- =============== TAB 1: LIVE DASHBOARD =============== -->
+        <div class="tab-content active" id="tab-dashboard">
+            <div class="sidebar-layout">
+                <div>
+                    <div class="glass">
+                        <h2>⚙️ Network Parameters</h2>
+                        <div class="control">
+                            <label><span>Distance (m)</span><span id="distVal">100</span></label>
+                            <input type="range" id="distSlider" min="10" max="500" value="100">
+                        </div>
+                        <div class="control">
+                            <label><span>Mobility (m/s)</span><span id="mobVal">2</span></label>
+                            <input type="range" id="mobSlider" min="0" max="10" value="2" step="0.5">
+                        </div>
+                        <div class="control">
+                            <label><span>Serving Station</span></label>
+                            <select id="ssSelect" class="sel">
+                                <option value="1">Base Station 1</option>
+                                <option value="2">Base Station 2</option>
+                                <option value="3">Satellite Relay</option>
+                                <option value="4">Drone Relay</option>
+                            </select>
+                        </div>
+                        <div class="control">
+                            <label><span>Application Type</span></label>
+                            <select id="atSelect" class="sel">
+                                <option value="1">Video Stream</option>
+                                <option value="2">Web Browsing</option>
+                                <option value="3">IoT Telemetry</option>
+                            </select>
+                        </div>
+                        <div class="control">
+                            <label><span>Network Layer</span></label>
+                            <select id="layerSelect" class="sel">
+                                <option value="1">Layer 1</option>
+                                <option value="2">Layer 2</option>
+                                <option value="3">Layer 3</option>
+                                <option value="4">Layer 4</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="glass">
+                        <h2>⭐ Trust Behavior Gauge</h2>
+                        <div id="trustGaugePlotly" style="height:200px;"></div>
+                        <div style="text-align:center; margin-top:8px;">
+                            <span class="kpi-label">QoS State</span>
+                            <div class="kpi-value" id="qosDisp" style="color:var(--secondary);">--</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="grid-4" style="margin-bottom:18px;">
+                        <div class="kpi">
+                            <div class="kpi-label">SNR</div>
+                            <div class="kpi-value" id="snrDisp" style="color:var(--primary)">-- dB</div>
+                        </div>
+                        <div class="kpi">
+                            <div class="kpi-label">Path Loss</div>
+                            <div class="kpi-value" id="plDisp" style="color:var(--warn)">-- dB</div>
+                        </div>
+                        <div class="kpi">
+                            <div class="kpi-label">Raw Trust</div>
+                            <div class="kpi-value" id="rawTrustDisp" style="color:var(--accent)">--</div>
+                        </div>
+                        <div class="kpi">
+                            <div class="kpi-label">Smoothed Trust</div>
+                            <div class="kpi-value" id="smoothTrustDisp" style="color:var(--primary)">--</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="glass" style="margin-bottom:0;">
+                            <h2>🚀 Throughput Comparison</h2>
+                            <div class="grid-2" style="gap: 8px;">
+                                <div id="baseSpeedGauge" style="height:230px;"></div>
+                                <div id="optSpeedGauge" style="height:230px;"></div>
+                            </div>
+                        </div>
+                        <div class="glass" style="margin-bottom:0;">
+                            <h2>📈 Trust History</h2>
+                            <div class="chart-box" style="height:230px;"><canvas id="historyChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-3" style="margin-top:18px;">
+                        <div class="glass" style="margin-bottom:0;">
+                            <h2>📉 Distance vs Trust</h2>
+                            <div class="chart-box" style="height:200px;"><canvas id="distTrustChart"></canvas></div>
+                        </div>
+                        <div class="glass" style="margin-bottom:0;">
+                            <h2>📶 SNR vs Trust</h2>
+                            <div class="chart-box" style="height:200px;"><canvas id="snrTrustChart"></canvas></div>
+                        </div>
+                        <div class="glass" style="margin-bottom:0;">
+                            <h2>🏃 Feature Values</h2>
+                            <div class="chart-box" style="height:200px;"><canvas id="featureBarChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =============== TAB 2: SEMANTIC TRANSMITTER =============== -->
+        <div class="tab-content" id="tab-transmit">
+            <div class="glass">
+                <h2>📡 Semantic Transmission Simulator</h2>
+                <div class="grid-2">
+                    <div>
+                        <div class="upload-zone" id="uploadArea">
+                            <div class="icon">📸</div>
+                            <p>Click or drag image to simulate transmission</p>
+                            <small style="color:var(--muted)">PNG, JPG, JPEG, WEBP</small>
+                            <input type="file" id="imageInput" accept="image/*" style="display:none">
+                        </div>
+                        <button class="btn-primary" id="transmitBtn" disabled>🚀 START TRANSMISSION</button>
+                        <div class="loader" id="loader"></div>
+                    </div>
+                    <div>
+                        <div class="kpi" style="margin-bottom:12px;">
+                            <div class="kpi-label">Current Trust-Adaptive Bandwidth</div>
+                            <div class="kpi-value" style="color:var(--primary)" id="bwDisp">-- %</div>
+                        </div>
+                        <div class="kpi">
+                            <div class="kpi-label">Channel SNR (derived from Distance)</div>
+                            <div class="kpi-value" style="color:var(--warn)" id="txSnrDisp">-- dB</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2" id="resultsGrid" style="display:none;">
+                <div class="img-panel">
+                    <div class="img-panel-head"><span style="color:var(--accent)">📺 TRADITIONAL (JPEG)</span><span
+                            id="tradQuality">--</span></div>
+                    <div class="img-display"><img id="tradImg" src="" alt=""></div>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-l">PSNR</div>
+                            <div class="stat-v" style="color:var(--accent)" id="tradPsnr">--</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-l">SSIM</div>
+                            <div class="stat-v" style="color:var(--accent)" id="tradSsim">--</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-l">Size</div>
+                            <div class="stat-v" id="tradSize">--</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-l">Saved</div>
+                            <div class="stat-v">0%</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="img-panel">
+                    <div class="img-panel-head"><span style="color:var(--primary)">✨ SEMANTIC
+                            (Trust-Adaptive)</span><span id="semTrust">--</span></div>
+                    <div class="img-display"><img id="semImg" src="" alt=""></div>
+                    <div class="stats">
+                        <div class="stat">
+                            <div class="stat-l">PSNR</div>
+                            <div class="stat-v" style="color:var(--primary)" id="semPsnr">--</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-l">SSIM</div>
+                            <div class="stat-v" style="color:var(--primary)" id="semSsim">--</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-l">Size</div>
+                            <div class="stat-v" style="color:var(--primary)" id="semSize">--</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-l">Saved</div>
+                            <div class="stat-v" style="color:var(--primary)" id="semSaved">--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass" style="margin-top: 18px;">
+                <h2>📊 Semantic Transmission Superiority</h2>
+                <div class="grid-2">
+                    <img src="/results/figure1_psnr.png"
+                        style="width: 100%; border-radius: 12px; border: 1px solid var(--border);"
+                        alt="PSNR Comparison">
+                    <img src="/results/figure2_ssim.png"
+                        style="width: 100%; border-radius: 12px; border: 1px solid var(--border);"
+                        alt="SSIM Comparison">
+                </div>
+            </div>
+        </div>
+
+        <!-- =============== TAB 3: MODEL EVALUATION =============== -->
+        <div class="tab-content" id="tab-model">
+            <div class="glass" style="text-align:center;">
+                <h2 style="justify-content:center;">🧠 SVM Trust Model Evaluation</h2>
+                <p style="color:var(--muted); margin-bottom:16px;">Trained with: SVM (RBF Kernel) + StandardScaler
+                    pipeline on 1500 samples. Training script: <code>train_models.py</code></p>
+                <button class="btn-secondary" id="evalBtn">⚡ Run Model Evaluation</button>
+                <div class="loader" id="evalLoader" style="margin-top:16px;"></div>
+            </div>
+
+            <div id="evalResults" style="display:none;">
+                <div class="grid-4" style="margin-bottom:18px;">
+                    <div class="kpi">
+                        <div class="kpi-label">Overall Accuracy</div>
+                        <div class="kpi-value" style="color:var(--success)" id="accDisp">--</div>
+                    </div>
+                    <div class="kpi">
+                        <div class="kpi-label">Class 1 (Low) F1</div>
+                        <div class="kpi-value" style="color:var(--accent)" id="f1c1">--</div>
+                    </div>
+                    <div class="kpi">
+                        <div class="kpi-label">Class 2 (Med) F1</div>
+                        <div class="kpi-value" style="color:var(--warn)" id="f1c2">--</div>
+                    </div>
+                    <div class="kpi">
+                        <div class="kpi-label">Class 3 (High) F1</div>
+                        <div class="kpi-value" style="color:var(--primary)" id="f1c3">--</div>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="glass" style="margin-bottom:0;">
+                        <h2>📊 Confusion Matrix</h2>
+                        <div id="confusionPlotly" style="height:350px;"></div>
+                    </div>
+                    <div class="glass" style="margin-bottom:0;">
+                        <h2>📈 ROC Curves (Per-Class + Micro-Avg)</h2>
+                        <div id="rocPlotly" style="height:350px;"></div>
+                    </div>
+                </div>
+
+                <div class="glass" style="margin-top:18px;">
+                    <h2>📋 SVM Classification Report</h2>
+                    <table
+                        style="width: 100%; text-align: left; border-collapse: collapse; background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); background: rgba(0,0,0,0.4);">
+                                <th style="padding: 12px 16px;">Class</th>
+                                <th style="padding: 12px 16px;">Precision</th>
+                                <th style="padding: 12px 16px;">Recall</th>
+                                <th style="padding: 12px 16px;">F1-Score</th>
+                                <th style="padding: 12px 16px;">Support</th>
+                            </tr>
+                        </thead>
+                        <tbody id="classReportBody">
+                            <tr>
+                                <td colspan="5" style="padding: 20px; text-align: center; color: var(--muted);">Run
+                                    evaluation to populate</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== TAB SWITCHING ==========
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // ========== CHART.JS DEFAULTS ==========
+        Chart.defaults.color = '#7a7f99';
+        Chart.defaults.font.family = "'Outfit', sans-serif";
+        const gridColor = 'rgba(255,255,255,0.04)';
+
+        // ========== PLOTLY TRUST GAUGE ==========
+        const plotlyDark = { paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', font: { color: '#7a7f99', family: 'Outfit' }, margin: { t: 20, b: 0, l: 20, r: 20 } };
+
+        Plotly.newPlot('trustGaugePlotly', [{
+            type: 'indicator', mode: 'gauge+number',
+            value: 0,
+            number: { font: { size: 36, color: '#45fcdb' }, suffix: '' },
+            gauge: {
+                axis: { range: [0, 3], tickwidth: 1, tickcolor: '#333', dtick: 1 },
+                bar: { color: '#45fcdb', thickness: 0.3 },
+                bgcolor: 'rgba(255,255,255,0.03)',
+                borderwidth: 0,
+                steps: [
+                    { range: [0, 1], color: 'rgba(255,77,109,0.15)' },
+                    { range: [1, 2], color: 'rgba(255,179,71,0.15)' },
+                    { range: [2, 3], color: 'rgba(69,252,219,0.15)' }
+                ],
+                threshold: { line: { color: '#fff', width: 2 }, thickness: 0.8, value: 0 }
+            }
+        }], { ...plotlyDark, height: 200 }, { responsive: true, displayModeBar: false });
+
+        // ========== PLOTLY SPEED GAUGES ==========
+        const gaugeLayout = { ...plotlyDark, height: 230, margin: { t: 40, b: 10, l: 20, r: 20 } };
+        Plotly.newPlot('baseSpeedGauge', [{
+            type: 'indicator', mode: 'gauge+number',
+            title: { text: "Base", font: { color: '#7a7f99', size: 13 } },
+            value: 40,
+            number: { font: { size: 24, color: '#ffb347' }, suffix: ' Mbps' },
+            gauge: {
+                axis: { range: [0, 120], dtick: 40, tickcolor: '#333' },
+                bar: { color: '#ffb347', thickness: 0.25 },
+                bgcolor: 'rgba(255,255,255,0.03)'
+            }
+        }], gaugeLayout, { responsive: true, displayModeBar: false });
+
+        Plotly.newPlot('optSpeedGauge', [{
+            type: 'indicator', mode: 'gauge+number+delta',
+            title: { text: "Semantic", font: { color: '#7a7f99', size: 13 } },
+            value: 40,
+            delta: { reference: 40, increasing: { color: '#00e676' }, decreasing: { color: '#ff4d6d' }, font: { size: 12 } },
+            number: { font: { size: 24, color: '#7c6aef' }, suffix: ' Mbps' },
+            gauge: {
+                axis: { range: [0, 120], dtick: 40, tickcolor: '#333' },
+                bar: { color: '#7c6aef', thickness: 0.25 },
+                bgcolor: 'rgba(255,255,255,0.03)'
+            }
+        }], gaugeLayout, { responsive: true, displayModeBar: false });
+
+        // ========== HISTORY CHART ==========
+        const histLen = 30;
+        const rawArr = Array(histLen).fill(0);
+        const smoothArr = Array(histLen).fill(0);
+
+        const ctxHist = document.getElementById('historyChart').getContext('2d');
+        const gradientHist = ctxHist.createLinearGradient(0, 0, 0, 230);
+        gradientHist.addColorStop(0, 'rgba(69,252,219,0.3)');
+        gradientHist.addColorStop(1, 'rgba(69,252,219,0.0)');
+
+        const historyChart = new Chart(ctxHist, {
+            type: 'line',
+            data: {
+                labels: Array(histLen).fill(''),
+                datasets: [
+                    { label: 'Raw', data: rawArr, borderColor: 'rgba(255,77,109,0.5)', borderWidth: 1.5, pointRadius: 0, tension: 0.1 },
+                    { label: 'Smoothed', data: smoothArr, borderColor: '#45fcdb', borderWidth: 3, pointRadius: 0, tension: 0.4, fill: true, backgroundColor: gradientHist }
+                ]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+                scales: { y: { min: 0, max: 3.5, grid: { color: gridColor }, border: { dash: [4, 4] } }, x: { display: false } },
+                plugins: { legend: { position: 'top', align: 'end', labels: { boxWidth: 8, usePointStyle: true } } }
+            }
+        });
+
+        // ========== SCATTER: Distance vs Trust ==========
+        const distTrustData = [];
+        const distTrustChart = new Chart(document.getElementById('distTrustChart'), {
+            type: 'scatter',
+            data: { datasets: [{ label: 'Samples', data: distTrustData, backgroundColor: 'rgba(69,252,219,0.6)', borderColor: '#45fcdb', borderWidth: 1, pointRadius: 5, pointHoverRadius: 8 }] },
+            options: {
+                responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+                scales: { x: { title: { display: true, text: 'Distance' }, grid: { color: gridColor }, border: { dash: [4, 4] } }, y: { min: 0, max: 3.5, title: { display: true, text: 'Trust' }, grid: { color: gridColor }, border: { dash: [4, 4] } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // ========== SCATTER: SNR vs Trust ==========
+        const snrTrustData = [];
+        const snrTrustChart = new Chart(document.getElementById('snrTrustChart'), {
+            type: 'scatter',
+            data: { datasets: [{ label: 'Samples', data: snrTrustData, backgroundColor: 'rgba(124,106,239,0.6)', borderColor: '#7c6aef', borderWidth: 1, pointRadius: 5, pointHoverRadius: 8 }] },
+            options: {
+                responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+                scales: { x: { title: { display: true, text: 'SNR (dB)' }, grid: { color: gridColor }, border: { dash: [4, 4] } }, y: { min: 0, max: 3.5, title: { display: true, text: 'Trust' }, grid: { color: gridColor }, border: { dash: [4, 4] } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // ========== BAR: Feature Values ==========
+        const featureBarChart = new Chart(document.getElementById('featureBarChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Distance', 'Mobility', 'SNR', 'Path Loss'],
+                datasets: [{ label: 'Value', data: [0, 0, 0, 0], backgroundColor: ['#45fcdb', '#7c6aef', '#ffb347', '#ff4d6d'], borderRadius: 6 }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: { y: { beginAtZero: true, grid: { color: gridColor } }, x: { grid: { display: false } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // ========== LIVE POLLING ==========
+        const distSlider = document.getElementById('distSlider');
+        const mobSlider = document.getElementById('mobSlider');
+        distSlider.addEventListener('input', e => document.getElementById('distVal').textContent = e.target.value);
+        mobSlider.addEventListener('input', e => document.getElementById('mobVal').textContent = e.target.value);
+
+        async function pollNetwork() {
+            try {
+                const body = {
+                    distance: parseFloat(distSlider.value),
+                    mobility: parseFloat(mobSlider.value),
+                    ss: parseInt(document.getElementById('ssSelect').value),
+                    at: parseInt(document.getElementById('atSelect').value),
+                    layer: parseInt(document.getElementById('layerSelect').value)
+                };
+                const res = await fetch('/api/evaluate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                const d = await res.json();
+                if (!d.success) return;
+
+                // KPIs
+                document.getElementById('snrDisp').textContent = d.snr_db + ' dB';
+                document.getElementById('plDisp').textContent = d.path_loss + ' dB';
+                document.getElementById('rawTrustDisp').textContent = d.raw_trust;
+                document.getElementById('smoothTrustDisp').textContent = d.smoothed_trust.toFixed(2);
+                document.getElementById('qosDisp').textContent = d.qos;
+                document.getElementById('qosDisp').style.color = d.smoothed_trust > 2.5 ? '#45fcdb' : d.smoothed_trust > 1.5 ? '#7c6aef' : '#ff4d6d';
+
+                // Plotly Trust Gauge
+                const col = d.smoothed_trust > 2.5 ? '#45fcdb' : d.smoothed_trust > 1.5 ? '#ffb347' : '#ff4d6d';
+                Plotly.update('trustGaugePlotly', { value: [d.smoothed_trust], 'gauge.bar.color': [col], 'gauge.threshold.value': [d.smoothed_trust], 'number.color': [col] });
+
+                // Plotly Speed Gauges
+                Plotly.update('baseSpeedGauge', { value: [d.base_speed] });
+                Plotly.update('optSpeedGauge', { value: [d.optimized_speed], 'delta.reference': [d.base_speed] });
+
+                // History
+                rawArr.push(d.raw_trust); rawArr.shift();
+                smoothArr.push(d.smoothed_trust); smoothArr.shift();
+                historyChart.update();
+
+                // Scatter
+                distTrustData.push({ x: d.distance, y: d.smoothed_trust });
+                if (distTrustData.length > 50) distTrustData.shift();
+                distTrustChart.update();
+
+                snrTrustData.push({ x: d.snr_db, y: d.smoothed_trust });
+                if (snrTrustData.length > 50) snrTrustData.shift();
+                snrTrustChart.update();
+
+                // Feature Bar
+                featureBarChart.data.datasets[0].data = [d.distance, body.mobility, d.snr_db, d.path_loss];
+                featureBarChart.update();
+
+                // Transmitter tab KPIs
+                document.getElementById('txSnrDisp').textContent = d.snr_db + ' dB';
+                document.getElementById('bwDisp').textContent = (d.smoothed_trust / 3 * 100).toFixed(0) + '%';
+
+            } catch (e) { console.error(e); }
+        }
+        setInterval(pollNetwork, 1200);
+        pollNetwork();
+
+        // ========== TRANSMISSION LOGIC ==========
+        const uploadArea = document.getElementById('uploadArea');
+        const imageInput = document.getElementById('imageInput');
+        const transmitBtn = document.getElementById('transmitBtn');
+        let selectedImage = null;
+
+        uploadArea.addEventListener('click', () => imageInput.click());
+        imageInput.addEventListener('change', e => {
+            if (e.target.files[0]) {
+                selectedImage = e.target.files[0];
+                uploadArea.querySelector('p').textContent = selectedImage.name;
+                uploadArea.style.borderColor = 'var(--primary)';
+                transmitBtn.disabled = false;
+            }
+        });
+
+        transmitBtn.addEventListener('click', async () => {
+            if (!selectedImage) return;
+            transmitBtn.disabled = true;
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('resultsGrid').style.display = 'none';
+
+            const fd = new FormData();
+            fd.append('image', selectedImage);
+            fd.append('distance', distSlider.value);
+            fd.append('mobility', mobSlider.value);
+            fd.append('ss', document.getElementById('ssSelect').value);
+            fd.append('at', document.getElementById('atSelect').value);
+
+            try {
+                const res = await fetch('/api/transmit', { method: 'POST', body: fd });
+                const d = await res.json();
+                if (d.success) {
+                    document.getElementById('resultsGrid').style.display = 'grid';
+                    document.getElementById('tradImg').src = d.images.traditional;
+                    document.getElementById('tradQuality').textContent = d.traditional.quality_desc;
+                    document.getElementById('tradPsnr').textContent = d.traditional.psnr + ' dB';
+                    document.getElementById('tradSsim').textContent = d.traditional.ssim;
+                    document.getElementById('tradSize').textContent = d.traditional.size_kb + ' KB';
+                    document.getElementById('semImg').src = d.images.semantic;
+                    document.getElementById('semTrust').textContent = 'Trust: ' + d.smoothed_trust;
+                    document.getElementById('semPsnr').textContent = d.semantic.psnr + ' dB';
+                    document.getElementById('semSsim').textContent = d.semantic.ssim;
+                    document.getElementById('semSize').textContent = d.semantic.size_kb + ' KB';
+                    document.getElementById('semSaved').textContent = d.bandwidth_savings + '%';
+                } else { alert('Error: ' + d.error); }
+            } catch (e) { alert('Network error'); }
+            finally { document.getElementById('loader').style.display = 'none'; transmitBtn.disabled = false; }
+        });
+
+        // ========== MODEL EVALUATION ==========
+        document.getElementById('evalBtn').addEventListener('click', async () => {
+            const loader = document.getElementById('evalLoader');
+            loader.style.display = 'block';
+            document.getElementById('evalResults').style.display = 'none';
+
+            try {
+                const res = await fetch('/api/model_eval');
+                const d = await res.json();
+                if (!d.success) { alert(d.error); return; }
+
+                document.getElementById('evalResults').style.display = 'block';
+
+                // Accuracy
+                document.getElementById('accDisp').textContent = (d.accuracy * 100).toFixed(1) + '%';
+                if (d.per_class['1']) document.getElementById('f1c1').textContent = d.per_class['1'].f1;
+                if (d.per_class['2']) document.getElementById('f1c2').textContent = d.per_class['2'].f1;
+                if (d.per_class['3']) document.getElementById('f1c3').textContent = d.per_class['3'].f1;
+
+                // Confusion Matrix (Plotly Heatmap)
+                const cm = d.confusion_matrix;
+                Plotly.newPlot('confusionPlotly', [{
+                    z: cm, type: 'heatmap',
+                    x: ['Pred 1', 'Pred 2', 'Pred 3'], y: ['True 1', 'True 2', 'True 3'],
+                    colorscale: [[0, '#0e1020'], [0.5, '#7c6aef'], [1, '#45fcdb']],
+                    text: cm.map(row => row.map(v => v.toString())),
+                    texttemplate: '%{text}', textfont: { size: 18, color: '#fff' },
+                    showscale: true, colorbar: { tickfont: { color: '#7a7f99' } }
+                }], {
+                    ...plotlyDark, height: 350,
+                    xaxis: { title: 'Predicted', color: '#7a7f99' },
+                    yaxis: { title: 'Actual', color: '#7a7f99', autorange: 'reversed' }
+                }, { responsive: true, displayModeBar: false });
+
+                // ROC Curves
+                const rocTraces = [];
+                const colors = { class_1: '#ff4d6d', class_2: '#ffb347', class_3: '#45fcdb', micro_avg: '#7c6aef' };
+                const names = { class_1: 'Low Trust', class_2: 'Med Trust', class_3: 'High Trust', micro_avg: 'Micro-Avg' };
+                for (const key of Object.keys(d.roc)) {
+                    rocTraces.push({
+                        x: d.roc[key].fpr, y: d.roc[key].tpr,
+                        mode: 'lines', name: `${names[key]} (AUC=${d.roc[key].auc})`,
+                        line: { color: colors[key], width: key === 'micro_avg' ? 3 : 2, dash: key === 'micro_avg' ? 'dash' : 'solid' }
+                    });
+                }
+                rocTraces.push({ x: [0, 1], y: [0, 1], mode: 'lines', name: 'Random', line: { color: '#333', dash: 'dot', width: 1 }, showlegend: false });
+                Plotly.newPlot('rocPlotly', rocTraces, {
+                    ...plotlyDark, height: 350,
+                    xaxis: { title: 'False Positive Rate', color: '#7a7f99', range: [0, 1] },
+                    yaxis: { title: 'True Positive Rate', color: '#7a7f99', range: [0, 1.05] },
+                    legend: { x: 0.4, y: 0.05, bgcolor: 'rgba(0,0,0,0.4)', font: { size: 10 } }
+                }, { responsive: true, displayModeBar: false });
+
+                // Classification Report Table
+                const tbody = document.getElementById('classReportBody');
+                tbody.innerHTML = '';
+                const classes = ['1', '2', '3'];
+                const classNames = ['Class 1 (Low)', 'Class 2 (Med)', 'Class 3 (High)'];
+                classes.forEach((c, i) => {
+                    if (d.per_class[c]) {
+                        tbody.innerHTML += `
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05); transition: background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                                <td style="padding: 12px 16px; font-weight: 600; color: var(--primary)">${classNames[i]}</td>
+                                <td style="padding: 12px 16px;">${(d.per_class[c].precision).toFixed(3)}</td>
+                                <td style="padding: 12px 16px;">${(d.per_class[c].recall).toFixed(3)}</td>
+                                <td style="padding: 12px 16px;">${(d.per_class[c].f1).toFixed(3)}</td>
+                                <td style="padding: 12px 16px;">${d.per_class[c].support}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+            } catch (e) { alert('Evaluation failed: ' + e.message); }
+            finally { loader.style.display = 'none'; }
+        });
+    </script>
+</body>
+
+</html>
