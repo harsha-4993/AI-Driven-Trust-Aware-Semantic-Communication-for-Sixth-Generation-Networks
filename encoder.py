@@ -13,11 +13,11 @@ import os
 try:
     from transformers import CLIPModel, CLIPProcessor
     CLIP_AVAILABLE = True
-    print("✅ CLIP library found")
+    print("[OK] CLIP library found")
 except ImportError:
     CLIP_AVAILABLE = False
-    print("⚠️ CLIP not found - will use simulation mode")
-    print("   Run: pip install transformers")
+    print("[!] CLIP not found - will use simulation mode")
+    print("    Run: pip install transformers")
 
 class SemanticEncoder:
     """
@@ -26,7 +26,7 @@ class SemanticEncoder:
     """
     
     def __init__(self):
-        print("\n📡 Initializing Semantic Encoder...")
+        print("\n[*] Initializing Semantic Encoder...")
         
         if CLIP_AVAILABLE:
             try:
@@ -34,14 +34,14 @@ class SemanticEncoder:
                 self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
                 self.model.eval()
                 self.mode = "actual"
-                print("✅ Using actual CLIP model (real semantic extraction)")
+                print("[OK] Using actual CLIP model (real semantic extraction)")
             except Exception as e:
-                print(f"⚠️ Could not load CLIP: {e}")
+                print(f"[!] Could not load CLIP: {e}")
                 self.mode = "simulation"
-                print("✅ Using simulation mode")
+                print("[OK] Using simulation mode")
         else:
             self.mode = "simulation"
-            print("✅ Using simulation mode")
+            print("[OK] Using simulation mode")
     
     def encode(self, image_path):
         """
@@ -50,7 +50,7 @@ class SemanticEncoder:
         """
         # Load image
         image = Image.open(image_path).convert('RGB')
-        print(f"   📸 Processing: {os.path.basename(image_path)}")
+        print(f"   [IMG] Processing: {os.path.basename(image_path)}")
         
         if self.mode == "simulation":
             return self._simulate_encode(image)
@@ -135,17 +135,17 @@ if __name__ == "__main__":
     # Check if test_images folder has images
     test_folder = "test_images"
     if not os.path.exists(test_folder):
-        print(f"\n❌ '{test_folder}' folder not found!")
+        print(f"\n[ERROR] '{test_folder}' folder not found!")
         print("   Please create 'test_images' folder and add some images.")
     else:
         images = [f for f in os.listdir(test_folder) 
                   if f.endswith(('.jpg', '.png', '.jpeg'))]
         
         if not images:
-            print(f"\n❌ No images found in '{test_folder}' folder!")
+            print(f"\n[ERROR] No images found in '{test_folder}' folder!")
             print("   Please add at least one .jpg or .png image.")
         else:
-            print(f"\n📁 Found {len(images)} image(s) in test_images/")
+            print(f"\n[DIR] Found {len(images)} image(s) in test_images/")
             
             # Test each image
             for img in images:
@@ -153,13 +153,13 @@ if __name__ == "__main__":
                 image_path = os.path.join(test_folder, img)
                 result = encoder.encode(image_path)
                 
-                print(f"   ✅ Encoding complete!")
-                print(f"   📊 Mode: {result['mode']}")
-                print(f"   📐 Latent vector shape: {result['shape']}")
-                print(f"   🔢 First 5 values: {[round(float(x), 3) for x in result['latent_vector'][:5]]}")
-                print(f"   📏 Vector norm: {np.linalg.norm(result['latent_vector']):.3f}")
+                print(f"   [OK]  Encoding complete!")
+                print(f"   [STATS] Mode: {result['mode']}")
+                print(f"   [SHAPE] Latent vector shape: {result['shape']}")
+                print(f"   [NUM] First 5 values: {[round(float(x), 3) for x in result['latent_vector'][:5]]}")
+                print(f"   [NORM]  Vector norm: {np.linalg.norm(result['latent_vector']):.3f}")
             
             print("\n" + "=" * 60)
-            print("✅ STEP 2 COMPLETE! Semantic encoder is working.")
+            print("[OK] STEP 2 COMPLETE! Semantic encoder is working.")
             print("=" * 60)
-            print("\n➡️ Ready for Step 3: Channel Simulation")
+            print("\n[NEXT] Ready for Step 3: Channel Simulation")

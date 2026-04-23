@@ -10,7 +10,8 @@ This project implements a web-based integration of an Artificial Intelligence ga
 - **Adaptive Transmission Simulator:** Dynamically assigns transmission architectures. Compare standard JPEG degradations visually, byte-for-byte, against compressed semantic payload recovery on customized low-SNR channel streams.
 - **Deep-Dark Glassmorphic Aesthetics:** An intensely styled neon and deep dark-mode (`#060714`) interface powering dual throughput speedometers, linear-gradient history charts, and unified backend data visualizations.
 - **Model Intelligence Evaluation:** Run API-level assessment of the internal SVM algorithms showing explicit Classification Reports directly via the frontend.
-
+- **Federated Learning Scaling:** Integrated `federated_learning.py` simulating decentralized model aggregations across dynamic base station nodes, improving the global trust evaluation parameters offline.
+- **True Offline Independence:** All analytical frontend engines (Chart.js and Plotly.js) scale completely locally. After the first model synchronization, the system functions 100% autonomously without external internet reliance.
 ## Requirements
 
 1. **Python 3.8+**

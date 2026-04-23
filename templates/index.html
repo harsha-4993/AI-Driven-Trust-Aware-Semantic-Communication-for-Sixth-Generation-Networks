@@ -539,6 +539,13 @@
                             <div class="chart-box" style="height:200px;"><canvas id="featureBarChart"></canvas></div>
                         </div>
                     </div>
+
+                    <div class="glass" style="margin-top:18px; margin-bottom:0;">
+                        <h2>📊 Model Accuracy Comparison (Trust Ranking)</h2>
+                        <div class="chart-box" style="text-align: center;">
+                            <img src="/results/figure8_model_accuracy.png" style="max-height: 250px; border-radius: 8px; border: 1px solid var(--border);" alt="Model Accuracy">
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -669,7 +676,7 @@
                         <div id="confusionPlotly" style="height:350px;"></div>
                     </div>
                     <div class="glass" style="margin-bottom:0;">
-                        <h2>📈 ROC Curves (Per-Class + Micro-Avg)</h2>
+                        <h2>📈 ROC Curves (Per-Class, Micro & Macro Avg)</h2>
                         <div id="rocPlotly" style="height:350px;"></div>
                     </div>
                 </div>
@@ -969,27 +976,34 @@
                     showscale: true, colorbar: { tickfont: { color: '#7a7f99' } }
                 }], {
                     ...plotlyDark, height: 350,
+                    margin: { t: 20, b: 40, l: 60, r: 20 },
                     xaxis: { title: 'Predicted', color: '#7a7f99' },
                     yaxis: { title: 'Actual', color: '#7a7f99', autorange: 'reversed' }
                 }, { responsive: true, displayModeBar: false });
 
                 // ROC Curves
                 const rocTraces = [];
-                const colors = { class_1: '#ff4d6d', class_2: '#ffb347', class_3: '#45fcdb', micro_avg: '#7c6aef' };
-                const names = { class_1: 'Low Trust', class_2: 'Med Trust', class_3: 'High Trust', micro_avg: 'Micro-Avg' };
+                const colors = { class_1: '#ff4d6d', class_2: '#ffb347', class_3: '#45fcdb', micro_avg: '#7c6aef', macro_avg: '#ffffff' };
+                const names = { class_1: 'Low Trust', class_2: 'Med Trust', class_3: 'High Trust', micro_avg: 'Micro-Avg', macro_avg: 'Macro-Avg' };
                 for (const key of Object.keys(d.roc)) {
                     rocTraces.push({
                         x: d.roc[key].fpr, y: d.roc[key].tpr,
                         mode: 'lines', name: `${names[key]} (AUC=${d.roc[key].auc})`,
-                        line: { color: colors[key], width: key === 'micro_avg' ? 3 : 2, dash: key === 'micro_avg' ? 'dash' : 'solid' }
+                        line: { 
+                            color: colors[key], 
+                            width: (key === 'micro_avg' || key === 'macro_avg') ? 3 : 2, 
+                            dash: key === 'micro_avg' ? 'dash' : key === 'macro_avg' ? 'dot' : 'solid',
+                            shape: 'hv'
+                        }
                     });
                 }
-                rocTraces.push({ x: [0, 1], y: [0, 1], mode: 'lines', name: 'Random', line: { color: '#333', dash: 'dot', width: 1 }, showlegend: false });
+                rocTraces.push({ x: [0, 1], y: [0, 1], mode: 'lines', name: 'Random', line: { color: '#444', dash: 'dash', width: 1.5 }, showlegend: false });
                 Plotly.newPlot('rocPlotly', rocTraces, {
                     ...plotlyDark, height: 350,
+                    margin: { t: 20, b: 40, l: 60, r: 20 },
                     xaxis: { title: 'False Positive Rate', color: '#7a7f99', range: [0, 1] },
                     yaxis: { title: 'True Positive Rate', color: '#7a7f99', range: [0, 1.05] },
-                    legend: { x: 0.4, y: 0.05, bgcolor: 'rgba(0,0,0,0.4)', font: { size: 10 } }
+                    legend: { x: 0.45, y: 0.1, bgcolor: 'rgba(0,0,0,0.6)', font: { size: 10 } }
                 }, { responsive: true, displayModeBar: false });
 
                 // Classification Report Table
