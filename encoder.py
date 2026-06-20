@@ -48,12 +48,27 @@ class SemanticEncoder:
         Convert image to semantic latent vector
         This produces the "latent features" mentioned in LRISC paper
         """
+        # Validate image path exists
+        if not os.path.exists(image_path):
+            raise FileNotFoundError(f"Image file not found: {image_path}")
+        
+        if not os.path.isfile(image_path):
+            raise ValueError(f"Path is not a file: {image_path}")
+        
+        file_size = os.path.getsize(image_path)
+        if file_size == 0:
+            raise ValueError(f"Image file is empty: {image_path}")
+        
         # Load image
-        image = Image.open(image_path).convert('RGB')
-        print(f"   [IMG] Processing: {os.path.basename(image_path)}")
+        try:
+            image = Image.open(image_path).convert('RGB')
+        except Exception as e:
+            raise IOError(f"Failed to open image {image_path}: {str(e)}")
+        
+        print(f"   [IMG] Processing: {os.path.basename(image_path)} ({file_size} bytes)")
         
         if self.mode == "simulation":
-            return self._simulate_encode(image)
+            return self._simulate_encode(image, image_path)
         
         # Real encoding with CLIP
         inputs = self.processor(images=image, return_tensors="pt")
@@ -88,7 +103,7 @@ class SemanticEncoder:
             "image_name": os.path.basename(image_path)
         }
     
-    def _simulate_encode(self, image):
+    def _simulate_encode(self, image, image_path):
         """
         Simulation mode - generates realistic features when CLIP not available
         Based on image properties (brightness, colors)

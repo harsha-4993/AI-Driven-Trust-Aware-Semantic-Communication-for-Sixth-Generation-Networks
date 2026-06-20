@@ -35,9 +35,9 @@ os.makedirs('static', exist_ok=True)
 print("Loading Semantic Encoder...")
 encoder = SemanticEncoder()
 print("Loading Trust SVM Model...")
-trust_model = joblib.load("best_model.pkl")
+trust_model = joblib.load(r"C:\Users\harsh\Downloads\unified-6g-trust-system\best_model.pkl")
 print("Loading Test Data...")
-X_test, y_test = joblib.load("test_data.pkl")
+X_test, y_test = joblib.load(r"C:\Users\harsh\Downloads\unified-6g-trust-system\test_data.pkl")
 print("[OK] All models ready!")
 
 # Global state for Behavior Model (EMA Smoothing)
@@ -226,8 +226,10 @@ def transmit():
             return jsonify({'error': 'No image uploaded'}), 400
         file = request.files['image']
         if file.filename == '':
-            return jsonify({'error': 'No image selected'}), 400
-
+            return jsonify({'error': 'No image selected'}), 400        
+        # Validate file extension
+        if not allowed_file(file.filename):
+            return jsonify({'error': f'Invalid file type. Allowed: {ALLOWED_EXTENSIONS}'}), 400
         distance = float(request.form.get('distance', 100))
         ss = int(request.form.get('ss', 1))
         at = int(request.form.get('at', 1))
@@ -245,9 +247,25 @@ def transmit():
 
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        # Create uploads directory if it doesn't exist
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+        
+        # Save file
         file.save(filepath)
+        
+        # Verify file was saved
+        if not os.path.exists(filepath):
+            return jsonify({'error': f'Failed to save image: {filepath}'}), 500
+        
+        # Verify file has content
+        if os.path.getsize(filepath) == 0:
+            return jsonify({'error': 'Uploaded file is empty'}), 400
 
-        original_img = Image.open(filepath).convert('RGB')
+        try:
+            original_img = Image.open(filepath).convert('RGB')
+        except Exception as img_err:
+            return jsonify({'error': f'Invalid image file: {str(img_err)}'}), 400
         original_base64 = image_to_base64(original_img)
 
         # Traditional
@@ -259,7 +277,10 @@ def transmit():
         trad_compression = round((1 - trad_size/150) * 100, 1)
 
         # Semantic
-        encoding_result = encoder.encode(filepath)
+        try:
+            encoding_result = encoder.encode(filepath)
+        except Exception as encode_err:
+            return jsonify({'error': f'Encoding failed: {str(encode_err)}'}), 500
         original_vector = encoding_result["latent_vector"]
         received_vector = ChannelSimulator.transmit(original_vector, snr_db)
         semantic_similarity = float(np.dot(original_vector, received_vector) /
